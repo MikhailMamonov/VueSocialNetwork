@@ -62,8 +62,7 @@ methods:{ handleSubmit() {
      this.isBusy = true;
      this.$store.dispatch('authentication/login', this.credentials)
         .then((result) => {
-            console.log(result);
-            debugger;
+            console.log("about/redirect");
             this.$router.push('/about').catch((err)=>{console.log(err); this.errors = err;} );
         })
         .catch((err) => {

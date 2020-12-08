@@ -35,8 +35,7 @@ const router =  new Router({
       path: '/',
       name: 'home',
       component: Home,
-                  // a meta field
-                  meta: { requiresAuth: true },
+                  
     },
     {
       path: '/profile',
@@ -90,8 +89,7 @@ const router =  new Router({
         next();
       }
     } else {
-      console.log(store.getters['authentication/isAuthenticated']);
-      console.log("next");
+ 
       next(); // make sure to always call next()!
     }
   });

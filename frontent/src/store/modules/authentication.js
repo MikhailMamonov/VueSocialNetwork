@@ -2,20 +2,17 @@
 import { authService } from '../../services/auth.service';
 import { EventBus } from '../../event-bus';
 
-const user = JSON.parse(localStorage.getItem('user'));
+const user = localStorage.getItem("user");
 
-const initialState = { 
-  token: localStorage.getItem('auth-token') || '',
-  status: user ? { loggedIn: true }: {},
-  user: user||{}
- };
-
- const state = { token: localStorage.getItem('auth-token') || '', status: '', user: user||{} };
+ const state = { token: localStorage.getItem('auth-token') || '',
+                 status: '',
+                 user: user? JSON.parse(user): {}
+                };
 const getters = {
-    isAuthenticated: (authState) => { debugger; return !!authState.token},
+    isAuthenticated: (authState) => { console.log("isAuthenticated", !!authState.token); return !!authState.token},
     authStatus: (authState) => authState.status,
     authToken: (authState) => authState.token,
-    user: (authState) => authState.user,
+    user: (authState) => {console.log("user", authState.user); return authState.user},
 };
 
 const actions = {
@@ -25,9 +22,11 @@ const actions = {
             authService.login(credentials)
             .subscribe((result) => {
               localStorage.setItem('auth-token', result.token); // stash the auth token in localStorage
-              debugger;
-              commit('loginSuccess', result.token, result.user);
-              EventBus.$emit('logged-in', null);
+              localStorage.setItem('user', JSON.stringify(result.user)); // stash the auth token in localStorage
+              console.log("beforeLoginSuccess", result.user, result.token);
+              commit('loginSuccess', {token: result.token, user: result.user});
+              
+              console.log(result);
               //dispatch('user/userRequest', null, { root: true });
               resolve(result);
             },
@@ -42,7 +41,7 @@ const actions = {
         return new Promise((resolve, reject) => {
           commit('logout');
           localStorage.removeItem('auth-token');
-          localStorage.removeItem('profile');
+          localStorage.removeItem('user');
           resolve();
         });
     },
@@ -52,10 +51,11 @@ const mutations = {
     loginRequest: (authState) => {
         authState.status = 'attempting authentication request';
     },
-    loginSuccess: (authState, token, user) => {
+    loginSuccess: (authState, data) => {
+        console.log("loginSuccess", data.profile, data.token);
         authState.status = { loggedIn: true };
-        authState.user = user;
-        authState.token = token;
+        authState.user = data.user;
+        authState.token = data.token;
         
     },
     loginError: (authState) => {
