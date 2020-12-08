@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>VueJSSocialNetwork.Services</AssemblyName>
+    <RootNamespace>VueJSSocialNetwork.Services</RootNamespace>
+  </PropertyGroup>
+
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\VueJSSocialNetwork.Data\VueJSSocialNetwork.Data.csproj" />
+    <ProjectReference Include="..\VueSocialNetwork.Common\VueJSSocialNetwork.Common.csproj" />
+  </ItemGroup>
+
+</Project>
