@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 
 import auth from './modules/authentication';
 import user from './modules/user';
+import posts from './modules/posts'
 
 Vue.use(Vuex);
 
@@ -31,5 +32,12 @@ export default new Vuex.Store({
       mutations: user.mutations,
       getters: user.getters,
   },
+  posts: {
+    namespaced: true,
+    state: posts.state,
+    actions: posts.actions,
+    mutations: posts.mutations,
+    getters: posts.getters,
+},
 },
 });

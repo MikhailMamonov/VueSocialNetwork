@@ -37,7 +37,7 @@
 </template>
 
 <script >
-import Spinner from '@/components/Spinner.vue'; // @ is an alias to /src
+import Spinner from '@/components/Spinner.vue'; 
 import { mapGetters } from 'vuex';
 import { dashboardService } from '../../services/dashboard.service';
 

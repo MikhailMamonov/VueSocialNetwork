@@ -83,7 +83,7 @@
   </section>
 </template>
 <script>
-import Spinner from '@/components/Spinner.vue'; // @ is an alias to /src
+import Spinner from '@/components/Spinner.vue'; 
 import { accountService } from './../../services/account.service';
 
 export default {

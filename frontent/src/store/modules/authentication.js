@@ -1,6 +1,5 @@
 
 import { authService } from '../../services/auth.service';
-import { EventBus } from '../../event-bus';
 
 const user = localStorage.getItem("user");
 
@@ -22,12 +21,11 @@ const actions = {
             authService.login(credentials)
             .subscribe((result) => {
               localStorage.setItem('auth-token', result.token); // stash the auth token in localStorage
-              localStorage.setItem('user', JSON.stringify(result.user)); // stash the auth token in localStorage
+              localStorage.setItem('user', JSON.stringify(result.user));
               console.log("beforeLoginSuccess", result.user, result.token);
               commit('loginSuccess', {token: result.token, user: result.user});
               
               console.log(result);
-              //dispatch('user/userRequest', null, { root: true });
               resolve(result);
             },
             (errors) => {

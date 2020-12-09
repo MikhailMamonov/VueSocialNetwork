@@ -14,23 +14,7 @@ Vue.use(Router);
 
 const router =  new Router({
     mode: 'history',
-    routes: [
-    //   {
-    //     path: '/users/:id',
-    //     name: 'user-details',
-    //     component: User,
-    //   },
-    //   {
-    //     path: '/add',
-    //     name: 'add',
-    //     component: AddUser,
-    //   },
-    //   {
-    //     path: '/users',
-    //     name: 'users',
-    //     component: UserList,
-    //   },
-    
+    routes: [   
     {
       path: '/',
       name: 'home',
@@ -41,7 +25,6 @@ const router =  new Router({
       path: '/profile',
       name: 'profile',
       component: Profile,
-                  // a meta field
                   meta: { requiresAuth: true },
     },
       {
@@ -56,7 +39,6 @@ const router =  new Router({
           {
             path: 'home',
             component: DashboardHome,
-            // a meta field
             meta: { requiresAuth: true },
           },
         ],
@@ -76,8 +58,7 @@ const router =  new Router({
 
   router.beforeEach((to, from, next) => {
     if (to.matched.some((record) => record.meta.requiresAuth)) {
-      // this route requires auth, check if logged in
-      // if not, redirect to login page.
+
       if (!store.getters['authentication/isAuthenticated']) {
         console.log(store.getters['authentication/isAuthenticated']);
         next({
@@ -90,7 +71,7 @@ const router =  new Router({
       }
     } else {
  
-      next(); // make sure to always call next()!
+      next(); 
     }
   });
   

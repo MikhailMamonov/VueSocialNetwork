@@ -36,14 +36,9 @@
 </template>
 
 <script >
-//import Spinner from '@/components/Spinner.vue'; // @ is an alias to /src
-
 
 export default {
     name: 'LoginForm',
-//     components: {
-//     Spinner,
-//   },
     data: function(){
         return { 
             isBusy: false,

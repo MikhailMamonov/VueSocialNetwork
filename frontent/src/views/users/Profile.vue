@@ -3,50 +3,63 @@
 <div class="col-sm-3 well text-center">
   <Spinner v-bind:show="isBusy" />
     <div class="well">
-            <p><a asp-controller="Users" asp-action="AccountDetails" asp-route-id="@Model.Id"><strong>{{profile.firstName}} {{profile.lastName}}</strong></a></p>
+            <p><a asp-controller="Users" asp-action="AccountDetails" asp-route-id="@Model.Id"><strong >{{name()}}</strong></a></p>
         </div>
         <div class="well">
             <p><a href="#"><strong>Interests</strong></a></p>
             <p>
-                @Html.Partial("_UserInterests", Model.Interests)
+                {{profile.interests}}
             </p>
+        </div>
+        <div class="well">
+            <posts-list :posts="profile.posts"  />
+            <!-- Кнопка запуска модального окна -->
+<button class="btn btn-primary" type="button" @click="showModal">  Добавить Пост</button>
+<add-post v-show="isModalVisible" @close="closeModal" ></add-post>
         </div>
 </div>
  </div>
 </template>
 
 <script >
-import Spinner from '@/components/Spinner.vue'; // @ is an alias to /src
+import Spinner from '@/components/Spinner.vue'; 
 import { mapGetters } from 'vuex';
 import { dashboardService } from '../../services/dashboard.service';
+import PostsList from '../../components/Posts/PostsList.vue';
+import AddPost from '../../components/Posts/AddPost.vue';
 
 export default {
     name: 'Profile',
     data: function () {
     return { 
       isBusy: false,
+      isModalVisible: false,
       user:{}
        };  
   },
   methods:{
       name() {
-      return this.homeData.firstName + ' ' + this.homeData.lastName;
-  }
+        console.log("user", this.profile);
+      return this.profile.firstName + ' ' + this.profile.lastName;
+  },
+  showModal() {
+        this.isModalVisible = true;
+      },
+      closeModal() {
+        this.isModalVisible = false;
+      }
   },
   computed: mapGetters({
-    profile: 'user/profile',
+    profile: 'authentication/user'
   }),
 
   components: {
-    Spinner,
+    Spinner, PostsList, AddPost
   },
-  
-  created() {
+
+   created() {
      this.isBusy = true;
-     dashboardService.getHomeDetails().then((resp) => {
-        this.homeData = resp.data;
-        this.isBusy = false;
-     });
+     
   }
 }
 </script>

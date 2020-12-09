@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { EventBus } from '.././event-bus';
+
 import { mapGetters } from 'vuex';
 
 export default {
@@ -51,14 +51,9 @@ export default {
     profile: 'authentication/user',
   }),
    created() {
-   EventBus.$on('logged-in', () => {
-      // this doesn't currently do anything in this demo but does get fired on successful login.
-      // leaving it here to show how to allow communication between unrelated components - ie. Store -> Component
-      console.log('logged-in message received...');
-    });
+  
   },
   destroyed() {
-    EventBus.$off('logged-in');
   }
 }
 </script>

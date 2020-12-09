@@ -10,7 +10,6 @@ class AccountService extends BaseService {
     constructor() {  super(); }
 
     static get Instance() {
-       // Do you need arguments? Make it a regular method instead.
        return this.instance || (this.instance = new this());
     }
 
@@ -21,5 +20,4 @@ class AccountService extends BaseService {
     }
 }
 
-// export a singleton instance in the global namespace
 export const accountService = AccountService.Instance;
