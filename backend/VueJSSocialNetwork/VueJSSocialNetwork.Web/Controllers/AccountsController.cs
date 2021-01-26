@@ -22,6 +22,8 @@ using VueJSSocialNetwork.Data.Entities;
 using VueJSSocialNetwork.Web.Auth;
 using VueJSSocialNetwork.Web.ViewModels.Validations;
 using DocumentFormat.OpenXml.Office.CustomUI;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 
@@ -31,19 +33,16 @@ namespace VueJSSocialNetwork.Web.Controllers
     [Route("api/[controller]")]
     public class AccountsController : Controller
     {
-        private readonly ApplicationDbContext _appDbContext;
         private readonly UserManager<User> _userManager;
-        private readonly IJwtFactory _jwtFactory;
-        private readonly JwtIssuerOptions _jwtOptions;
-        private IConfiguration _config;
+        private readonly ApplicationSettings _appSettings;
 
-        public AccountsController(UserManager<User> userManager, ApplicationDbContext appDbContext, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IConfiguration config)
+
+        public AccountsController(UserManager<User> userManager, ApplicationDbContext appDbContext,
+            IOptions<ApplicationSettings> appSettings )
         {
             _userManager = userManager;
-            _jwtFactory = jwtFactory;
-            _jwtOptions = jwtOptions.Value;
-            _appDbContext = appDbContext;
-            _config = config;
+            _appSettings = appSettings.Value;
+
 
         }
 
@@ -67,7 +66,7 @@ namespace VueJSSocialNetwork.Web.Controllers
                 var user = new User()
                 {
                     UserName = model.Username, Email = model.Email, FirstName = model.FirstName,
-                    LastName = model.LastName, Age = model.Age, PictureUrl = model.Photo.ToString()
+                    LastName = model.LastName, Age = model.Age??0, PictureUrl = model.Photo
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -83,49 +82,64 @@ namespace VueJSSocialNetwork.Web.Controllers
             }
         }
 
+
         /// <summary>
-        /// Login User.
-        /// </summary>
-        // POST api/auth/login
-        [AllowAnonymous]
+            /// Login User.
+            /// </summary>
+            // POST api/auth/login
+            [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Post([FromBody] CredentialsViewModel credentials)
-        {
-            var validator = new CredentialsViewModelValidator();
-            var result = validator.Validate(credentials);
-            if (!ModelState.IsValid || !result.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var identity = await GetClaimsIdentity(credentials.UserName, credentials.Password);
-            if (identity == null)
-            {
-                return BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid username or password.", ModelState));
-            }
-
-            //var jwt = await Tokens.GenerateJwt(identity, _jwtFactory, credentials.UserName, _jwtOptions, new JsonSerializerSettings { Formatting = Formatting.Indented });
-           var user = await _userManager.FindByEmailAsync(credentials.UserName);
-           var tokenString = GenerateJsonWebToken(user);
-           return new OkObjectResult(new { user = user, token = tokenString });
-           
-            
-        }
-
-        private string GenerateJsonWebToken(User user)
+        public async Task<IActionResult> Post([FromBody] CredentialsViewModel model)
         {
             try
             {
-                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtIssuerOptions:Key"]));
-                var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+                //var validator = new CredentialsViewModelValidator();
+                //var validateResult = validator.Validate(credentials);
+                //if (!ModelState.IsValid || !validateResult.IsValid)
+                //{
+                //    return BadRequest(ModelState);
+                //}
 
-                var token = new JwtSecurityToken(_config["JwtIssuerOptions:Issuer"],
-                    _config["JwtIssuerOptions:Issuer"],
-                    null,
-                    expires: DateTime.Now.AddMinutes(120),
-                    signingCredentials: credentials);
+                //var identity = await GetClaimsIdentity(credentials.UserName, credentials.Password);
+                //if (identity == null)
+                //{
+                //    return BadRequest(Errors.AddErrorToModelState("login_failure", "Invalid username or password.", ModelState));
+                //}
 
-                return new JwtSecurityTokenHandler().WriteToken(token);
+
+                //var user = await _userManager.FindByEmailAsync(credentials.UserName);
+                //if (user == null)
+                //{
+                //    return BadRequest(ModelState);
+                //}
+
+
+
+                //var jwt = await Tokens.GenerateJwt(identity, _jwtFactory, credentials.UserName, _jwtOptions, new JsonSerializerSettings { Formatting = Formatting.Indented });
+
+                //return new OkObjectResult(new { user, token = jwt });
+
+                var user = await _userManager.FindByEmailAsync(model.UserName);
+                if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+                {
+                    var tokenDescriptor = new SecurityTokenDescriptor
+                    {
+                        Subject = new ClaimsIdentity(new Claim[]
+                        {
+                            new Claim("UserID",user.Id.ToString())
+                        }),
+                        Expires = DateTime.UtcNow.AddDays(1),
+                        SigningCredentials = 
+                            new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.JWT_Secret)), 
+                                SecurityAlgorithms.HmacSha256Signature)
+                    };
+                    var tokenHandler = new JwtSecurityTokenHandler();
+                    var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+                    var token = tokenHandler.WriteToken(securityToken);
+                    return new OkObjectResult(new { user, token });
+                }
+                else
+                    return BadRequest(new { message = "Username or password is incorrect." });
             }
             catch (Exception e)
             {
@@ -133,27 +147,30 @@ namespace VueJSSocialNetwork.Web.Controllers
                 throw;
             }
             
+            
         }
 
+        
 
-        private async Task<ClaimsIdentity> GetClaimsIdentity(string userName, string password)
-        {
-            if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
-                return await Task.FromResult<ClaimsIdentity>(null);
 
-            // get the user to verifty
-            var userToVerify = await _userManager.FindByEmailAsync(userName);
+        //private async Task<ClaimsIdentity> GetClaimsIdentity(string userName, string password)
+        //{
+        //    if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
+        //        return await Task.FromResult<ClaimsIdentity>(null);
 
-            if (userToVerify == null) return await Task.FromResult<ClaimsIdentity>(null);
+        //    // get the user to verifty
+        //    var userToVerify = await _userManager.FindByEmailAsync(userName);
 
-            // check the credentials
-            if (await _userManager.CheckPasswordAsync(userToVerify, password))
-            {
-                return await Task.FromResult(_jwtFactory.GenerateClaimsIdentity(userName, userToVerify.Id));
-            }
+        //    if (userToVerify == null) return await Task.FromResult<ClaimsIdentity>(null);
 
-            // Credentials are invalid, or account doesn't exist
-            return await Task.FromResult<ClaimsIdentity>(null);
-        }
+        //    // check the credentials
+        //    if (await _userManager.CheckPasswordAsync(userToVerify, password))
+        //    {
+        //        return await Task.FromResult(_jwtFactory.GenerateClaimsIdentity(userName, userToVerify.Id));
+        //    }
+
+        //    // Credentials are invalid, or account doesn't exist
+        //    return await Task.FromResult<ClaimsIdentity>(null);
+        //}
     }
 }

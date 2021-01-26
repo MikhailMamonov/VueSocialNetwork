@@ -11,7 +11,7 @@ namespace VueJSSocialNetwork.Services.Implementations
     public class UserService : IUserService
     {
         private readonly ApplicationDbContext db;
-        private IPostService postService;
+        //private IPostService postService;
 
         public UserModel GetById(string id)
         {
@@ -23,31 +23,32 @@ namespace VueJSSocialNetwork.Services.Implementations
             return null;
         }
 
-        public UserService(ApplicationDbContext db, IPostService postService)
+        public UserService(ApplicationDbContext db/*, IPostService postService*/)
         {
             this.db = db;
-            this.postService = postService;
+            //this.postService = postService;
 
         }
 
         public bool CheckIfFriends(string requestUserId, string targetUserId)
         {
-            return this.db.UserFriend.Any(uf =>
-            (uf.UserId == requestUserId && uf.FriendId == targetUserId) || (uf.UserId == targetUserId && uf.FriendId == requestUserId));
+            return false;
+            //return this.db.UserFriend.Any(uf =>
+            //(uf.UserId == requestUserId && uf.FriendId == targetUserId) || (uf.UserId == targetUserId && uf.FriendId == requestUserId));
         }
 
         public void MakeFriends(string senderId, string receiverId)
         {
-            if (this.UserExists(senderId) && this.UserExists(receiverId) && !this.CheckIfFriends(senderId, receiverId))
-            {
-                var userFriend = new UserFriend
-                {
-                    UserId = senderId,
-                    FriendId = receiverId
-                };
-                this.db.UserFriend.Add(userFriend);
-                this.db.SaveChanges();
-            }
+            //if (this.UserExists(senderId) && this.UserExists(receiverId) && !this.CheckIfFriends(senderId, receiverId))
+            //{
+            //    var userFriend = new UserFriend
+            //    {
+            //        UserId = senderId,
+            //        FriendId = receiverId
+            //    };
+            //    this.db.UserFriend.Add(userFriend);
+            //    this.db.SaveChanges();
+            //}
         }
 
         public virtual UserAccountModel UserDetailsFriendsCommentsAndPosts(string userId, int pageIndex, int pageSize)
@@ -74,7 +75,7 @@ namespace VueJSSocialNetwork.Services.Implementations
         {
             if (this.UserExists(userId))
             {
-                var userPosts = this.postService.PostsByUserId(userId, pageIndex, pageSize);
+                //var userPosts = this.postService.PostsByUserId(userId);
                 var userAccountModel = db
                     .Users
                     .Where(u => u.Id == userId)
@@ -82,24 +83,24 @@ namespace VueJSSocialNetwork.Services.Implementations
                     .ProjectTo<UserAccountModel>()
                     .FirstOrDefault();
 
-                var friends = this.db
-                    .UserFriend
-                    .Where(u => u.UserId == userId && !u.Friend.IsDeleted)
-                    .Select(u => u.Friend)
-                    .ProjectTo<UserListModel>()
-                    .ToList();
+                //var friends = this.db
+                //    .UserFriend
+                //    .Where(u => u.UserId == userId && !u.Friend.IsDeleted)
+                //    .Select(u => u.Friend)
+                //    .ProjectTo<UserListModel>()
+                //    .ToList();
 
-                var otherFriends = this.db
-                    .UserFriend
-                    .Where(u => u.FriendId == userId && !u.User.IsDeleted)
-                    .Select(u => u.User)
-                    .ProjectTo<UserListModel>()
-                    .ToList();
+                //var otherFriends = this.db
+                //    .UserFriend
+                //    .Where(u => u.FriendId == userId && !u.User.IsDeleted)
+                //    .Select(u => u.User)
+                //    .ProjectTo<UserListModel>()
+                //    .ToList();
 
-                friends.AddRange(otherFriends);
+                //friends.AddRange(otherFriends);
 
-                userAccountModel.Posts = userPosts;
-                userAccountModel.Friends = friends;
+                //userAccountModel.Posts = userPosts;
+                //userAccountModel.Friends = friends;
                 
 
                 return userAccountModel;

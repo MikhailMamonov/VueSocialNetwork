@@ -21,7 +21,9 @@ using VueJSSocialNetwork.Web.Helpers;
 using System.Text;
 using System.Net;
 using System.Reflection;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using VueJSSocialNetwork.Web.Extensions;
 using VueJSSocialNetwork.Web.ViewModels.Validations;
@@ -33,9 +35,6 @@ namespace VueJSSocialNetwork.Web
 {
     public class Startup
     {
-        private const string SecretKey = "iNivDmHLpUA223sqsfhqGbMRdRj1PVkH"; // todo: get this from somewhere secure
-        private readonly SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey));
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -46,41 +45,32 @@ namespace VueJSSocialNetwork.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string con = "Server=DESKTOP-QMSUOKD\\SQLEXPRESS;AttachDbFileName=D:\\VueSocialNetwork\\backend\\SocialNetwork.mdf; Database=SocialNetwork;Trusted_Connection=Yes;";
-
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(con));
-
-            services.AddSingleton<IJwtFactory, JwtFactory>();
-            
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
-            var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
+            //Inject AppSettings
+            services.Configure<ApplicationSettings>(Configuration.GetSection("ApplicationSettings"));
 
-            // Configure JwtIssuerOptions
-            services.Configure<JwtIssuerOptions>(options =>
+            //Include Identity
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.Configure<IdentityOptions>(o =>
             {
-                options.Issuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
-                options.Audience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)];
-                options.SigningCredentials = new SigningCredentials(_signingKey, SecurityAlgorithms.HmacSha256);
+                // configure identity options
+                o.Password.RequireDigit = false;
+                o.Password.RequireLowercase = false;
+                o.Password.RequireUppercase = false;
+                o.Password.RequireNonAlphanumeric = false;
+                o.Password.RequiredLength = 4;
             });
 
-
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)],
-
-                ValidateAudience = true,
-                ValidAudience = jwtAppSettingOptions[nameof(JwtIssuerOptions.Audience)],
-
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = _signingKey,
-
-                RequireExpirationTime = false,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero
-            };
-
+            services.AddCors();
+            
+            //JWT
+            var key = Encoding.UTF8.GetBytes(Configuration["ApplicationSettings:JWT_Secret"].ToString());
+            
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -89,35 +79,18 @@ namespace VueJSSocialNetwork.Web
             })
                 .AddJwtBearer(configureOptions =>
             {
-                configureOptions.ClaimsIssuer = jwtAppSettingOptions[nameof(JwtIssuerOptions.Issuer)];
-                configureOptions.TokenValidationParameters = tokenValidationParameters;
+                configureOptions.RequireHttpsMetadata = false;
+                configureOptions.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                };
                 configureOptions.SaveToken = true;
             });
-
-            // api user claim policy
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("ApiUser", policy => policy.RequireClaim(Constants.Strings.JwtClaimIdentifiers.Rol, Constants.Strings.JwtClaims.ApiAccess));
-            });
-
-            // add identity
-            var builder = services.AddIdentityCore<User>(o =>
-            {
-                // configure identity options
-                o.Password.RequireDigit = false;
-                o.Password.RequireLowercase = false;
-                o.Password.RequireUppercase = false;
-                o.Password.RequireNonAlphanumeric = false;
-                o.Password.RequiredLength = 6;
-            });
-
-            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
-            builder.AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
-
-            services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()));
-
+            
             // Add application services.
             services.AddDomainServices();
 
@@ -131,10 +104,11 @@ namespace VueJSSocialNetwork.Web
 
             services.AddAutoMapper();
 
+            services.AddControllers();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CredentialsViewModelValidator>());
-
-
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -163,7 +137,12 @@ namespace VueJSSocialNetwork.Web
                         });
                 });
 
-            app.UseCors("AllowAll");
+            app.UseCors(builder =>
+                builder.WithOrigins(Configuration["ApplicationSettings:Client_URL"].ToString())
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+
+            );
 
             // Enable middleware to serve generated Swagger as a JSON endpoint
             app.UseSwagger();
@@ -174,6 +153,7 @@ namespace VueJSSocialNetwork.Web
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My First Swagger");
             });
 
+            app.UseAuthorization();
             app.UseAuthentication();
             app.UseDefaultFiles();
             app.UseStaticFiles();

@@ -1,43 +1,18 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import auth from './modules/authentication';
-import user from './modules/user';
-import posts from './modules/posts'
+import auth from './modules/auth/index';
+import users from './modules/users/index';
+import posts from './modules/posts/index';
+import friends from './modules/friends/index';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-  state: {
-
-  },
-  mutations: {
-
-  },
-  actions: {
-
-  },
   modules: {
-    authentication: {
-      namespaced: true,
-      state: auth.state,
-      mutations: auth.mutations,
-      getters: auth.getters,
-      actions: auth.actions,
- },
-    user: {
-      namespaced: true,
-      state: user.state,
-      actions: user.actions,
-      mutations: user.mutations,
-      getters: user.getters,
-  },
-  posts: {
-    namespaced: true,
-    state: posts.state,
-    actions: posts.actions,
-    mutations: posts.mutations,
-    getters: posts.getters,
-},
+    auth: auth,
+    users: users,
+    posts: posts,
+    friends: friends
 },
 });

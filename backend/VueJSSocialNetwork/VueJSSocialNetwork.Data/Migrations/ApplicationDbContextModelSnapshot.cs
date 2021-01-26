@@ -177,15 +177,15 @@ namespace VueJSSocialNetwork.Data.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("ImageName")
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<int>("Likes")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("Photo")
-                        .HasColumnType("varbinary(max)");
-
                     b.Property<string>("Text")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -277,26 +277,6 @@ namespace VueJSSocialNetwork.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("VueJSSocialNetwork.Data.Entities.UserFriend", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("FriendId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FriendId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserFriend");
-                });
-
             modelBuilder.Entity("VueJSSocialNetwork.Data.Entities.UserInterest", b =>
                 {
                     b.Property<string>("UserId")
@@ -372,21 +352,6 @@ namespace VueJSSocialNetwork.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("VueJSSocialNetwork.Data.Entities.UserFriend", b =>
-                {
-                    b.HasOne("VueJSSocialNetwork.Data.Entities.User", "Friend")
-                        .WithMany()
-                        .HasForeignKey("FriendId");
-
-                    b.HasOne("VueJSSocialNetwork.Data.Entities.User", "User")
-                        .WithMany("Friends")
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Friend");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("VueJSSocialNetwork.Data.Entities.UserInterest", b =>
                 {
                     b.HasOne("VueJSSocialNetwork.Data.Entities.Interest", "Interest")
@@ -413,8 +378,6 @@ namespace VueJSSocialNetwork.Data.Migrations
 
             modelBuilder.Entity("VueJSSocialNetwork.Data.Entities.User", b =>
                 {
-                    b.Navigation("Friends");
-
                     b.Navigation("Interests");
 
                     b.Navigation("Posts");

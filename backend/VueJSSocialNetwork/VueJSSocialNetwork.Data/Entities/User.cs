@@ -7,6 +7,7 @@ namespace VueJSSocialNetwork.Data.Entities
 {
     public class User : IdentityUser
     {
+        
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
@@ -18,8 +19,11 @@ namespace VueJSSocialNetwork.Data.Entities
 
 
         public string PictureUrl { get; set; }
-        public ICollection<UserInterest> Interests { get; set; } = new List<UserInterest>();
-        public ICollection<Post> Posts { get; set; } = new List<Post>();
-        public ICollection<UserFriend> Friends { get; set; } = new List<UserFriend>();
+        public ICollection<UserInterest> Interests { get; set; }
+        public List<Post> Posts { get; set; } = new List<Post>();
+        //public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+
+        //public ICollection<UserFriend> Friends { get; set; }
+
     }
 }

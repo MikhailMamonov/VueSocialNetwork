@@ -17,7 +17,7 @@ using VueJSSocialNetwork.Data.Entities;
 
 namespace VueJSSocialNetwork.Web.Controllers
 {
-    [Authorize(Policy = "ApiUser")]
+    [Authorize]
     [Route("api/[controller]/[action]")]
     public class DashboardController : Controller
     {

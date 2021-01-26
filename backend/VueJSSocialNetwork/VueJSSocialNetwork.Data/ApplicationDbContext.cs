@@ -8,23 +8,26 @@ namespace VueJSSocialNetwork.Data
 {
     public class ApplicationDbContext : IdentityDbContext<User>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> _options) : base(_options)
-        {
-        }
-
-        //public DbSet<Customer> Customers { get; set; }
 
         public DbSet<Interest> Interests { get; set; }
 
         public DbSet<Post> Posts { get; set; }
 
-        public DbSet<UserFriend> UserFriend { get; set; }
+        //public DbSet<Comment> Comments { get; set; }
+
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            
+            builder.ApplyConfiguration(new UserConfiguration());
+            //builder.ApplyConfiguration(new PostConfiguration());
 
             builder.ApplyConfiguration(new UserInterestConfiguration());
-            builder.ApplyConfiguration(new UserConfiguration());
             base.OnModelCreating(builder);
         }
 

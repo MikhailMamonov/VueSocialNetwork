@@ -1,78 +1,102 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import store from './store/store';
-import DashboardRoot from './views/dashboard/Root.vue';
-import DashboardHome from './views/dashboard/Home.vue';
-import LoginForm from './views/account/LoginForm.vue';
-import RegisterForm from './views/account/RegistrationForm.vue';
-import Profile from './views/users/Profile.vue';
-import About from './views/About.vue';
-import Home from './views/Home.vue';
+import vDashboardRoot from './views/dashboard/v-root.vue';
+import DashboardHome from './views/dashboard/v-home.vue';
+import vLoginForm from '@/components/profile/account/v-login-form.vue';
+import vRegisterForm from '@/components/profile/account/v-registration-form.vue';
+import vProfile from './components/profile/v-profile.vue';
+import vAbout from './components/v-about.vue';
+import vHome from './components/v-home.vue';
+import vPosts from './components/posts/v-posts';
+import vUsers from './components/users/v-users';
+import vFriends from './views/friends/v-friends';
+import vUserProfileSettings from '@/components/profile/settings/v-user-profile-settings';
+
 
 
 Vue.use(Router);
 
-const router =  new Router({
-    mode: 'history',
-    routes: [   
+const router = new Router({
+  mode: 'history',
+  routes: [
     {
       path: '/',
       name: 'home',
-      component: Home,
-                  
+      component: vHome,
+
     },
     {
-      path: '/profile',
-      name: 'profile',
-      component: Profile,
-                  meta: { requiresAuth: true },
+      path: '/settings/profile',
+      component: vUserProfileSettings,
+      meta: { requiresAuth: true },
     },
-      {
-        path: '/login',
-        name: 'login',
-        component: LoginForm,
-      },
-      {
-        path: '/dashboard',
-        component: DashboardRoot,
-        children: [
-          {
-            path: 'home',
-            component: DashboardHome,
-            meta: { requiresAuth: true },
-          },
-        ],
-      },
-      {
-        path: '/register',
-        name: 'register',
-        component: RegisterForm,
-      },
-      {
+    {
+      path: '/current_user',
+      name: 'current_user',
+      component: vProfile,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/friends',
+      name: 'friends',
+      component: vFriends,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: vLoginForm,
+    },
+    {
+      path: '/dashboard',
+      component: vDashboardRoot,
+      children: [
+        {
+          path: 'home',
+          component: DashboardHome,
+          meta: { requiresAuth: true },
+        },
+      ],
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: vRegisterForm,
+    },
+    {
       path: '/about',
       name: 'about',
-      component: About,
+      component: vAbout,
     },
-    ],
-  });
+    {
+      path: '/users',
+      name: 'users',
+      component: vUsers,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/posts',
+      name: 'posts',
+      component: vPosts,
+      meta: { requiresAuth: true },
+    },
+  ],
+});
 
-  router.beforeEach((to, from, next) => {
-    if (to.matched.some((record) => record.meta.requiresAuth)) {
+router.beforeEach((to, from, next) => {
 
-      if (!store.getters['authentication/isAuthenticated']) {
-        console.log(store.getters['authentication/isAuthenticated']);
-        next({
-          path: '/login',
-          query: { redirect: to.fullPath },
-        });
-      } else {
-        console.log(store.getters['authentication/isAuthenticated']);
-        next();
-      }
-    } else {
- 
-      next(); 
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+
+    if (store.getters['auth/isAuthenticated']) {
+      console.log(store.getters['auth/isAuthenticated']);
+      next();
+      return;
     }
-  });
-  
-  export default router;
+    next('/login') }
+    else {
+      next();
+  }
+});
+
+export default router;

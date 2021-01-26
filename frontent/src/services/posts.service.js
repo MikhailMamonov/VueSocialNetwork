@@ -1,25 +1,22 @@
 import axios from 'axios';
-
-import { BaseService } from './base.service';
-import { Observable } from 'rxjs/Rx';
-
-class PostsService extends BaseService {
-
-    static instance;
-
-    constructor() {  super(); }
-
-    static get Instance() {
-       // Do you need arguments? Make it a regular method instead.
-       return this.instance || (this.instance = new this());
-    }
-
+const url = "http://localhost:5000/api/posts";
+export const postsService =  { 
     addPost(post) {
-        return Observable.fromPromise(axios.post(`${this.api}/posts/`, post))
-        .map((res) => res.data)
-        .catch((error) => this.handleError(error.response));
+          return axios.post(url+'/Create', post);
+    },
+    getPosts(){
+        
+        return axios.get(url+'/GetPosts')
+    },
+    editPost(form,id){
+        let putUrl = url+ '/Edit';
+        
+        return axios.put(putUrl, form,
+            {params: {id: id}})
+    },
+    deletePost(id){
+        let deleteUrl = url+ '/Delete';
+        return axios.delete(deleteUrl,
+            {params:{id:id}})
     }
 }
-
-// export a singleton instance in the global namespace
-export const postsService = PostsService.Instance;

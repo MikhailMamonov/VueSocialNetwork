@@ -26,9 +26,9 @@ namespace VueJSSocialNetwork.Services.Models
 
         public void ConfigureMapping(Profile profile)
         {
-            profile.CreateMap<Post, PostModel>()
-                .ForMember(p => p.UserProfilePicture, cfg => cfg.MapFrom(p => p.User.PictureUrl))
-                .ForMember(p => p.UserFullName, cfg => cfg.MapFrom(p => p.User.FirstName + " " + p.User.LastName));
+            //profile.CreateMap<Post, PostModel>()
+            //    .ForMember(p => p.UserProfilePicture, cfg => cfg.MapFrom(p => p.User.PictureUrl))
+            //    .ForMember(p => p.UserFullName, cfg => cfg.MapFrom(p => p.User.FirstName + " " + p.User.LastName));
         }
     }
 }

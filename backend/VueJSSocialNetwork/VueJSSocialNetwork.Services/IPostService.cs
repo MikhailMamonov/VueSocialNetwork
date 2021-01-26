@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using VueJSSocialNetwork.Data.Entities;
 using VueJSSocialNetwork.Data.Entities.Enums;
 using VueJSSocialNetwork.Services.Infrastructure;
 using VueJSSocialNetwork.Services.Models;
@@ -8,10 +12,12 @@ namespace VueJSSocialNetwork.Services
 {
     public interface IPostService : IService
     {
-        PostModel PostById(int postId);
+        Post PostById(int postId);
 
-        PaginatedList<PostModel> PostsByUserId(string userId, int pageIndex, int pageSize);
+        List<Post> PostsByUserId(string userId);
 
-        void Create(string userId, string text, IFormFile photo);
+        void Create(string userId, Post post);
+
+        Task<ActionResult<Post>> Delete(int postId, string currentRootPathImages);
     }
 }

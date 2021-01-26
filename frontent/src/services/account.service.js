@@ -14,7 +14,7 @@ class AccountService extends BaseService {
     }
 
     register(userRegistration) {
-        return Observable.fromPromise(axios.post(`${this.api}/accounts`, userRegistration))
+        return Observable.fromPromise(axios.post(`${this.api}/accounts/register`, userRegistration))
         .map((res) => true)
         .catch((error) => this.handleError(error.response));
     }
