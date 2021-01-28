@@ -10,7 +10,7 @@ import vAbout from './components/v-about.vue';
 import vHome from './components/v-home.vue';
 import vPosts from './components/posts/v-posts';
 import vUsers from './components/users/v-users';
-import vFriends from './views/friends/v-friends';
+import vFriends from './components/friends/v-friend-list-tabs';
 import vUserProfileSettings from '@/components/profile/settings/v-user-profile-settings';
 
 
@@ -85,7 +85,7 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-
+  debugger;
   if (to.matched.some((record) => record.meta.requiresAuth)) {
 
     if (store.getters['auth/isAuthenticated']) {

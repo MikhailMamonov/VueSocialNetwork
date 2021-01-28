@@ -5,8 +5,9 @@ export const friendsService =  {
          const postUrl = url + '/AddFriend';
           return axios.post(postUrl,null, {params: {receiverId: receiverId, senderId:senderId}});
     },
-    getFriends(){
-        return axios.get(url)
+    getFriends(userId){
+        const getUrl = 'http://localhost:5000/api/Users' + '/GetFriends';
+        return axios.get(getUrl, { params: {id: userId} });
     },
     editFriend(form,id){
         let putUrl = url+`/${id}`;

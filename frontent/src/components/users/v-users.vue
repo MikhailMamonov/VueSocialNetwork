@@ -1,22 +1,16 @@
 <template>
-<div>
-    <div>Пользователи</div>
-        <p>
-      <a href="#"><strong>Users List</strong></a>
-    </p>
-      <div className="row">
-        <div className="col">
-      <ul class="list-unstyled">
+<v-card
+    class="mx-auto"
+    max-width="600"
+  >
+  <v-list dense>
+   <v-subheader>Users</v-subheader>
+
           <v-users-item 
-          v-for="user in users" :key="user.id"
+          v-for="(user,i) in users" :key="i"
           :user="user" /> 
-      </ul>
-        </div>
-      </div>
-  <div>
-      <a href=""></a>
-  </div>
-</div>
+      </v-list>
+</v-card>
 </template>
 
 <script>
@@ -30,6 +24,7 @@ export default {
   },
   data: function () {
     return { 
+      selectedItem: 1,
       isModalVisible: false,
        };  
   },

@@ -1,25 +1,27 @@
 <template>
 
-        <li>
-          <div class="container">
-          <div class="row flex-column">
-              <div class="col ">
-                <img :src="user.imageSrc"/>
-            </div>
-            <div class="col">
-              <p>{{user.firstName}}</p>
-              </div>
-            <div class="col">
-                <p>{{ user.lastName }}</p>
-              </div>
+        <v-list-item :key="user.firstName">
+          <v-list-item-icon>
+          <v-icon
+            color="pink"
+          >
+            mdi-star
+          </v-icon>
+        </v-list-item-icon>
+         <v-list-item-avatar>
+          <v-img :src="user.imageSrc"></v-img>
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title v-text="user.firstName+' '+ user.lastName"></v-list-item-title>
+        </v-list-item-content>
+
+         
+          
               <button class="btn btn-danger" v-if="isFriend" @click="deleteFromFriends()">Delete from friends</button>
               <button class=" btn btn-danger" v-else-if="isFriendRequested" @click="cancelRequest()">Cancel request</button>
               <button class=" btn btn-primary" v-else-if="user.id!==currentUser.id" @click="addToFriend()">Add to Friend</button>
               <button class=" btn btn-info" v-else >Edit profile</button>
-          </div>
-           
-          </div>
-        </li>
+        </v-list-item>
 </template>
 
 <script>

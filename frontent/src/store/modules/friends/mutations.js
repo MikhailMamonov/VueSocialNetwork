@@ -1,4 +1,9 @@
 
+const GET_FRIENDS = (state, payload)=>{
+    console.log("friends",payload.friends);
+    state.friends = payload.friends;
+}
+
 const ADD_FRIEND_REQUEST_SUCCESS = (state, payload) => {
     debugger;
     console.log("ADD_FRIEND_REQUEST_SUCCESS", payload);
@@ -41,6 +46,7 @@ export {
     ADD_FRIEND_ERROR,
     DELETE_FRIEND_SUCCESS,
     DELETE_FRIEND_REQUEST,
-    SET_FRIEND_REQUESTS
+    SET_FRIEND_REQUESTS,
+    GET_FRIENDS
 
 }

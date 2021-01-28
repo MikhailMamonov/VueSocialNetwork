@@ -37,13 +37,13 @@ const addToFriends =  ({commit, dispatch} , data) => {
                 console.log(e);
             });
     };
-    const getFriends = ({commit, dispatch}) => {
+    const getFriends = ({commit, dispatch}, userId) => {
         
-        return friendsService.getfriends()
+        return friendsService.getFriends(userId)
             .then((result) => {
                 
               
-              commit('GET_friendS_SUCCESS', result.data);
+              commit('GET_FRIENDS', result.data);
             })
             .catch((errors) => {
                 console.log("error",errors);

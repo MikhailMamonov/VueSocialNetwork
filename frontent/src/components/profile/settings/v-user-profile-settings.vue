@@ -1,5 +1,66 @@
 <template>
-  <div id="editForm" class="ui stackable grid container">
+<div id="editForm" class="ui stackable grid container">
+   <v-spinner @loading="loading"/>
+  <v-subheader>Edit Profile</v-subheader>
+  <validation-observer
+    ref="observer"
+    v-slot="{ invalid }"
+  >
+  <form class="contact-form" @submit.prevent="submitForm">
+    <validation-provider
+        v-slot="{ errors }"
+        name="firstName"
+        rules="required|max:10"
+      >
+    <v-text-field
+            v-model="firstName"
+            :counter="10"
+            :error-messages="errors"
+            label="firstName"
+            required
+          ></v-text-field>
+    </validation-provider>
+    <validation-provider
+        v-slot="{ errors }"
+        name="lastName"
+        rules="required|max:10"
+      >
+           <v-text-field
+            v-model="lastName"
+            :error-messages="errors"
+            label="lastName"
+            :counter="10"
+            required
+          ></v-text-field>
+    </validation-provider>
+<v-img
+      :src="getImageSrc"
+      height="300"
+      width="300"    
+    />
+    <v-file-input
+    :rules="rules"
+    accept="image/png, image/jpeg, image/bmp"
+    placeholder="Pick an avatar"
+    label="File input"
+    filled
+    prepend-icon="mdi-camera"
+     @change="chooseImage"
+  ></v-file-input>
+           <v-btn
+            class="mr-4"
+            @click="submitForm"
+            :disabled="invalid"
+            >
+            Update profile
+            </v-btn>
+  </form>
+  </validation-observer>
+<!-- 
+ 
+ 
+  
+
     <v-spinner @loading="loading"/>
         <h2 class="font-weight-semibold mb-4">Edit Profile</h2>
         <form class="contact-form" @submit.prevent="submitForm">
@@ -36,7 +97,7 @@
             </div>
           </div>
           </fieldset>
-        </form>
+        </form> -->
   </div>
 </template>
 
@@ -44,13 +105,39 @@
 
 import { mapState, mapGetters } from 'vuex';
 import vSpinner from '@/components/v-spinner.vue';
+  import { required, digits, email, max, regex } from 'vee-validate/dist/rules'
+  import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
+
+  setInteractionMode('eager')
+
+
+  extend('digits', {
+    ...digits,
+    message: '{_field_} needs to be {length} digits. ({_value_})',
+  })
+
+  extend('required', {
+    ...required,
+    message: '{_field_} can not be empty',
+  })
+
+  extend('max', {
+    ...max,
+    message: '{_field_} may not be greater than {length} characters',
+  })
+
+
+
 
 export default {
     name: 'v-user-profile-settings',
-    components: {vSpinner},
+    components: {vSpinner, ValidationProvider, ValidationObserver,},
     data () {
       return {
         file:null,
+        rules: [
+        value => !value || value.size < 2000000 || 'Avatar size should be less than 2 MB!',
+      ],
         success: false,
         error: false,
         loading: false,
@@ -72,7 +159,21 @@ export default {
         getImageSrc () {
           return this.imageSrc !== null && this.imageSrc!=='' 
                 ? this.imageSrc : this.defaultImage
-            }
+            },
+        firstNameErrors () {
+        const errors = []
+        if (!this.$v.firstName.$dirty) return errors
+        !this.$v.firstName.maxLength && errors.push('firstName must be at most 10 characters long')
+        !this.$v.firstName.required && errors.push('firstName is required.')
+        return errors
+      },
+      lastNameErrors () {
+        const errors = []
+        if (!this.$v.lastName.$dirty) return errors
+        !this.$v.lastName.maxLength && errors.push('lastName must be at most 10 characters long')
+        !this.$v.lastName.required && errors.push('lastName is required.')
+        return errors
+      },
       },
       mounted () {
         console.log("profile",this.profile);
@@ -87,8 +188,9 @@ export default {
           console.log("this.imageSrc",this.imageSrc);
             },
         chooseImage(e) {
-          if(e.target.files && e.target.files[0]){
-            this.file = e.target.files[0];
+          debugger;
+          if(e){
+            this.file = e;
             const reader = new FileReader()
             reader.onload = (e) => {
             this.imageSrc = e.target.result
@@ -104,6 +206,7 @@ export default {
           {
             this.loading = true;
 
+            this.$refs.observer.validate()
             let formData = new FormData();
             
             formData.append('imageFile', this.file);

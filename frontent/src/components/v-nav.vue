@@ -39,7 +39,6 @@
 <script>
 
 import { mapGetters } from 'vuex';
-import { mapState } from 'vuex';
 
 export default {
     name:'Nav',
@@ -53,7 +52,6 @@ export default {
   },
   data(){
     return{
-      user : {}
     }
   },
   computed:{ 
