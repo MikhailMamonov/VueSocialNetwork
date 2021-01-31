@@ -1,25 +1,28 @@
 <template>
-<div>
-      <p>
-      <a href="#"><strong>Posts List</strong></a>
-    </p>
-    <button class="btn btn-primary" type="button" @click="showModal">  Добавить Пост</button>
-    <v-add-post v-show="isModalVisible" @close="closeModal" />
-  <div className="row">
-    <div className="col">
-      <ul class="list-unstyled">
-        <v-posts-item 
+<v-card
+    max-width="900"
+    class="mx-auto"
+  >
+    <div
+              :class="[`text-h2`, active && `mb-1`]"
+              class="transition-swing"
+            >
+            Posts List
+            </div>
+      <v-list three-line>
+         <v-posts-item 
         v-for="(post,index) in posts" :key="post.id"
         :post="post" :index="index"/>
-      </ul>
-    </div>
-  </div>
-</div>
+    </v-list>
+    <v-btn @click="showModal">  Добавить Пост</v-btn>
+    <v-add-post v-show="isModalVisible" @close="closeModal" />
+  
+</v-card>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex';
-import { postsService } from '../../services/posts.service.js';
+
 import vPostsItem from '@/components/posts/v-posts-item';
 import vAddPost from '@/components/posts/v-add-post.vue';
 

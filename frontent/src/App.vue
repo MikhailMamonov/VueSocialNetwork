@@ -82,6 +82,12 @@ export default {
     }, (err) => {
       return Promise.reject(err);
     });
+           
+        this.$store.dispatch('users/getUsers')
+            .then(() => {
+              console.log('success');
+            }).catch(e => console.log('error'));
+        
   }
 };
 </script>

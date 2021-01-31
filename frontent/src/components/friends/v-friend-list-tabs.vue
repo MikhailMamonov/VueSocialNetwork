@@ -65,12 +65,14 @@ export default {
             friends: state => state.users.users
             })}, 
 
-  created(){
+/*   created(){
      this.$store.dispatch('friends/getFriends', this.currentUser.id)
             .then(() => {
               console.log('success');
             }).catch(e => console.log('error'));
-  },
+            
+  }, */
+
   methods:{
     showEditModal(index) {
       console.log("editIndex",index);

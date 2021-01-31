@@ -3,9 +3,13 @@
     class="mx-auto"
     max-width="600"
   >
+     <div
+              :class="[`text-h2`, active && `mb-1`]"
+              class="transition-swing"
+            >
+            Users List
+            </div>
   <v-list dense>
-   <v-subheader>Users</v-subheader>
-
           <v-users-item 
           v-for="(user,i) in users" :key="i"
           :user="user" /> 
@@ -56,14 +60,14 @@ export default {
         this.isModalDeleteVisible = false;
       }
   },
-  created(){
+/*   created(){
        
         this.$store.dispatch('users/getUsers')
             .then(() => {
               console.log('success');
             }).catch(e => console.log('error'));
         
-    }
+    } */
     }
 </script>
 

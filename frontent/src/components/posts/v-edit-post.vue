@@ -1,21 +1,33 @@
 <template>
-  <transition name="modal-fade">
-    <div class="modal-backdrop">
-      <div class="modal">
-        <header class="modal-header">
-          <slot name="header">
-            Edit Post
-            <button type="button" class="btn-close" @click="close">x</button>
-          </slot>
-        </header>
-        <section class="modal-body">
-          <slot name="body">
-            <p>
-              <label for="text">Text</label>
-              <textarea v-model="post.text" class="form-control"></textarea>
-            </p>
-            <p>
-              <label for="photo">photo</label>
+ <v-card>
+        <v-card-title>
+          <span class="headline">Edit Post</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col
+                cols="12"
+                sm="6"
+                md="4"
+              >
+                <v-text-field
+                  label="title*"
+                  v-model="post.title"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col
+                cols="12"
+              >
+               <v-text-field label="text" v-model="post.text" required></v-text-field>
+              </v-col>
+              <v-col
+                cols="12"
+                sm="6"
+                md="4"
+              >
+ <label for="photo">photo</label>
               <img
                 :src="post.imageSrc"
                 class="image"
@@ -29,22 +41,44 @@
                 accept="image/*"
                 :class="['form-control-file', hasError ? errorClass : '']"
               />
-            </p>
-          </slot>
-        </section>
-        <footer class="modal-footer">
-          <slot name="footer">
-            <button type="button" class="btn btn-secondary" @click="close">
-              Close
-            </button>
-            <button type="button" class="btn btn-primary" @click="editPost">
-              Edit Post
-            </button>
-          </slot>
-        </footer>
-      </div>
-    </div>
-  </transition>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  label="Email*"
+                  required
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  label="Password*"
+                  type="password"
+                  required
+                ></v-text-field>
+              </v-col>
+
+            </v-row>
+          </v-container>
+          <small>*indicates required field</small>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="blue darken-1"
+            text
+             @click="close"
+          >
+            Close
+          </v-btn>
+          <v-btn
+            color="blue darken-1"
+            text
+             @click="editPost"
+          >
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+
 </template>
 <script>
 export default {
@@ -86,6 +120,8 @@ export default {
       this.close();
     },
     close() {
+      console.log("Post", this.post);
+      debugger;
       this.$emit("close");
     },
     showPreview(e) {

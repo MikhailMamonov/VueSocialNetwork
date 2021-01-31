@@ -1,124 +1,43 @@
 <template>
   <section class="section">
-    <div class="container has-text-centered">
-      <div class="column is-4 is-offset-4">
-        <h3 class="title has-text-grey">Register</h3>
-        <p class="subtitle has-text-grey">Please enter your information</p>
-        <div class="box">
-          <!-- @submit handles any form of submission. -->
-          <!-- .prevent keeps the event from bubbling around and doing anything else. -->
-          <form @submit.prevent="handleSubmit">
-            <div class="field">
-              <div class="control">
-                <input
-                  class="input is-large"
-                  type="text"
-                  placeholder="First name"
-                  v-model="user.firstName"
-                  autofocus=""
-                />
-              </div>
-            </div>
+     <v-layout align-center justify-center>
+          <v-flex xs12 sm8 md4>
+            <v-card class="elevation-12">
+              <v-toolbar dark color="primary">
+                <v-toolbar-title>Register</v-toolbar-title>
+                <v-spacer></v-spacer>
+               
+              </v-toolbar>
+              <v-card-text>
+                <v-form>
+                  <v-text-field prepend-icon="person" v-model="user.email" label="Email" type="email"></v-text-field>
+                  <v-text-field prepend-icon="person" v-model="user.userName" label="UserName" type="userName"></v-text-field>
+                  <v-text-field id="password" prepend-icon="lock" v-model="user.password" label="Password" type="password"></v-text-field>
+                  <v-text-field id="password" prepend-icon="lock" v-model="user.confirmPassword" label="ConfirmPassword" type="password"></v-text-field>
+                  <v-text-field prepend-icon="person" v-model="user.firstName" label="First name" type="text"></v-text-field>
+                  <v-text-field prepend-icon="person" v-model="user.lastName" label="Last name" type="text"></v-text-field>
+                  
+                  <v-text-field prepend-icon="person" v-model="user.age" label="Age" type="number"></v-text-field>
+                  <v-text-field prepend-icon="person" v-model="user.location" label="Location" type="text"></v-text-field>
+                  
+                </v-form>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" type='submit' @click='registerUser'>Signup</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-flex>
+        </v-layout>
 
-            <div class="field">
-              <div class="control">
-                <input
-                  class="input is-large"
-                  type="text"
-                  placeholder="Last name"
-                  v-model="user.lastName"
-                />
-              </div>
-            </div>
-
-            <div class="field">
-              <div class="control">
-                <input
-                  class="input is-large"
-                  type="email"
-                  placeholder="Email"
-                  v-model="user.email"
-                />
-              </div>
-            </div>
-
-            <div class="field">
-              <div class="control">
-                <input
-                  class="input is-large"
-                  type="password"
-                  placeholder="Password"
-                  v-model="user.password"
-                />
-              </div>
-            </div>
-            <div class="field">
-              <div class="control">
-                <input
-                  class="input is-large"
-                  type="password"
-                  placeholder="ConfirmPassword"
-                  v-model="user.confirmPassword"
-                />
-              </div>
-            </div>
-            <div class="field">
-              <div class="control">
-                <input
-                  class="input is-large"
-                  type="number"
-                  placeholder="Age"
-                  v-model="user.age"
-                />
-                </div>
-            </div>
-                <div class="field">
-              <div class="control">
-                <input
-                  class="input is-large"
-                  type="text"
-                  placeholder="UserName"
-                  v-model="user.userName"
-                />
-                </div>
-                </div>
-            <div class="field">
-              <div class="control">
-                <input
-                  class="input is-large"
-                  type="text"
-                  placeholder="Location"
-                  v-model="user.location"
-                />
-              </div>
-            </div>
-            <v-spinner v-bind:show="isBusy" />
-            <button
-              class="button is-block is-info is-large is-fullwidth"
-              type="submit"
-            >
-              Submit
-            </button>
-            <div class="errors-container" v-if="errors">
-              {{ errors }}
-            </div>
-          </form>
-        </div>
-        <p class="has-text-grey">
-          <router-link to="/login">Login</router-link>
-        </p>
-      </div>
-    </div>
   </section>
 </template>
 <script>
-import vSpinner from '@/components/v-spinner.vue'; 
-import { accountService } from '@/services/account.service';
+import { accountService } from './../../../services/account.service';
 
 export default {
   name: 'v-registration-form',
-  components:{vSpinner},
-   data: function(){  
+  data: function(){  
     return { 
       isBusy: false,
       errors: '',
@@ -126,15 +45,14 @@ export default {
              firstName:'noname',lastName: 'noname',location: ''}
        };
        },
-       methods:{
-       handleSubmit() {
-  this.isBusy = true;
-  accountService.register(this.user).finally(() => this.isBusy = false)
-    .subscribe((result) => {
-      this.$router.push({name: 'login', query: { new: 'true', firstName: this.user.firstName, email: this.user.email }});
-    },
-    (errors) =>  this.errors = errors);
-}
+  methods:{
+    registerUser(){
+      this.isBusy = true;
+      accountService.register(this.user)
+       .then((result) => {
+         this.$router.push('/');
+       }).catch((errors) =>  this.errors = errors).finally(() => this.isBusy = false);            
+     }
 }
 }
 </script>

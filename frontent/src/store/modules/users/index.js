@@ -5,9 +5,9 @@ import * as getters from './getters';
 
 
 
-const currentUser=()=> localStorage.getItem("user");
-console.log("currentUser in state",currentUser());
-const state = { currentUser: currentUser!=null? JSON.parse(currentUser()): {}, status: '', users: {}};
+const currentUser= localStorage.getItem('user');
+console.log("currentUser in state",currentUser);
+const state = { currentUser: currentUser!=null&&currentUser!=='undefined'? JSON.parse(currentUser): {}, status: '', users: {}};
 
 export default {
   namespaced: true,

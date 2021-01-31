@@ -45,8 +45,7 @@ export default {
   methods:{ 
       logoff() {
      this.$store.dispatch('auth/LOGOUT').then(() => {
-       console.log()
-        this.$router.push('/');
+       console.log("logoff success");
      });
   }
   },

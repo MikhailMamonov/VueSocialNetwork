@@ -1,37 +1,31 @@
 <template>
     <section class="section">
+         <v-layout align-center justify-center>
+             <v-flex xs12 sm8 md4>
+                 <v-card class="elevation-12">
+                     <v-toolbar dark color="primary">
+                         <v-toolbar-title>Login form</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                    </v-toolbar>
+                    <v-card-text>
+                <v-form>
+                  <v-text-field prepend-icon="person" v-model="email" label="Email" type="text"></v-text-field>
+                  <v-text-field id="password" prepend-icon="lock" v-model="password" label="Password" type="password"></v-text-field>
+                </v-form>
+              </v-card-text>
+               <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" @click='logIn'>Login</v-btn>
+              </v-card-actions>
+                 </v-card>
+             </v-flex>
+         </v-layout>
         <div class="container has-text-centered">
-            <div class="column is-4 is-offset-4">
-                <h3 class="title has-text-grey">Login</h3>
-                    <p class="subtitle has-text-grey">Please login to proceed</p>         
-                    <article class="message is-success" v-if="$route.query.new">
-                        <div class="message-body">
-                            <strong>You're all set {{$route.query.firstName}}!</strong> Login with your password to continue.
-                        </div>
-                    </article>
-                    <div class="box">  
-                        <form  @submit.prevent="handleSubmit">
-                            <div class="field">
-                                <div class="control">
-                                <input class="input is-large" type="email" placeholder="Email" autofocus="" v-model="credentials.userName">
-                            </div>
-                            </div>
-                            <div class="field">
-                                <div class="control">
-                                <input class="input is-large" type="password" placeholder="Password" v-model="credentials.password">
-                                </div>
-                            </div>
-                            <button class="button is-block is-info is-large is-fullwidth" type="submit">Login</button>
-                            <div class="errors-container" v-if="errors">
-                                {{errors}}
-                            </div>
-                        </form>
-                    </div>
                     <p class="has-text-grey">
                         <router-link to="/register">Sign Up</router-link>
                     </p>
             </div>
-        </div>
+<!--         </div> -->
     </section>
 </template>
 
@@ -43,33 +37,19 @@ export default {
         return { 
             isBusy: false,
             errors: '',
-            credentials:{userName:'',password: ''}
+            email:null,
+            password:null
        };
     },  
     
-
-    created() {
-    if (this.$route.query.new) {
-        this.credentials.userName = this.$route.query.userName;
-    }
-},
-methods:{ handleSubmit() {
-     this.isBusy = true;
-     this.$store.dispatch('auth/login', this.credentials)
-        .then((result) => {
-            console.log("about/redirect");
-            this.$router.push('/about').catch((err)=>{console.log(err); this.errors = err;} );
+methods:{ 
+    logIn(){
+        this.$store.dispatch('auth/login',{email:this.email,password:this.password}).then(()=>{
+            this.$router.push('/').catch((err)=>{console.log(err); this.errors = err;} );
         })
-        .catch((err) => {
-            console.log(err);
-            this.errors = err;
-        })
-        .then(() => {
-            this.isBusy = false;
-        });
         }
       }
-      }
+    }
 </script>
 
 <style lang="scss" scoped> 

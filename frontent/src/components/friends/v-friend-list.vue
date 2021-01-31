@@ -5,7 +5,7 @@
               active-class="pink--text"
               multiple
             >
- <v-subheader> {{tab}}</v-subheader>
+
         <template v-for="(user, index) in users" >
           
           <v-list-item :key="user.id">

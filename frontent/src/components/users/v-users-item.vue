@@ -20,7 +20,7 @@
               <button class="btn btn-danger" v-if="isFriend" @click="deleteFromFriends()">Delete from friends</button>
               <button class=" btn btn-danger" v-else-if="isFriendRequested" @click="cancelRequest()">Cancel request</button>
               <button class=" btn btn-primary" v-else-if="user.id!==currentUser.id" @click="addToFriend()">Add to Friend</button>
-              <button class=" btn btn-info" v-else >Edit profile</button>
+              <router-link v-else to="/current_user" class=" btn btn-info" tag="button">Edit profile</router-link>
         </v-list-item>
 </template>
 

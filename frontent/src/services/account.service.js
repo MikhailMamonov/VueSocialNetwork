@@ -1,23 +1,8 @@
-
 import axios from 'axios';
-import { BaseService } from './base.service';
-import { Observable } from 'rxjs/Rx';
 
-class AccountService extends BaseService {
-
-    static instance;
-
-    constructor() {  super(); }
-
-    static get Instance() {
-       return this.instance || (this.instance = new this());
-    }
-
+const api = 'http://localhost:5000/api';
+export const accountService =  {
     register(userRegistration) {
-        return Observable.fromPromise(axios.post(`${this.api}/accounts/register`, userRegistration))
-        .map((res) => true)
-        .catch((error) => this.handleError(error.response));
+        return axios.post(`${api}/accounts/register`, userRegistration)
     }
 }
-
-export const accountService = AccountService.Instance;

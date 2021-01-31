@@ -16,6 +16,10 @@
       </header>
 <section class="modal-body">
       <slot name="body">
+      <v-text-field label="title" :rules="rules"></v-text-field>
+    <label for="text">Title</label>
+    <textarea v-model="itemTitle" class="form-control"></textarea>
+
           <p>
     <label for="text">Text</label>
     <textarea v-model="itemText" class="form-control"></textarea>
@@ -48,9 +52,11 @@ export default {
             file:"",
             imageSrc: require("@/assets/imgs/default.png"),
             itemText: 'JJOIJOIJO',
+            itemTitle: 'Header',
             hasError: false,
             errorClass : 'text-danger',
             newPost: {
+              title: 'header',
                 text: 'UJHUIOJOJOI',
                 photo: require("@/assets/imgs/default.png")
             }
@@ -61,9 +67,10 @@ export default {
             console.log("imageSrc",this.imageSrc);
 
             const formData = new FormData();
-            formData.append('text',  this.itemText)
+            formData.append('text',  this.itemText);
             this.newPost.text = this.itemText;
-
+            formData.append('title',  this.itemTitle);
+            this.newPost.title = this.itemTitle;
             formData.append('imageName',  this.imageName);
             this.newPost.photo = this.imageSrc;
 
