@@ -11,9 +11,9 @@ const getFriends = (friendsState) => {
   const isFriend = (friendsState) => userId => 
   { 
     console.log("friends", friendsState.friends);
+    debugger;
     let inFriends = friendsState.friends.filter(f => f.id === userId);
       console.log("val", inFriends);
-      debugger;
     return typeof inFriends !== 'undefined' && inFriends.length > 0;
    
   };
@@ -24,8 +24,6 @@ const getFriends = (friendsState) => {
       console.log("request.receiverId",request.receiverId);
       console.log("friendRequests", friendsState.friendRequests);
       const friendRequests = friendsState.friendRequests.filter(r => r.receiverId ===request.receiverId&& r.senderId===request.senderId);
-      
-      debugger;
       return typeof friendRequests !== 'undefined' && friendRequests.length > 0;
   }
 

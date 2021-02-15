@@ -60,18 +60,12 @@ export default {
   computed:{ 
     ...mapGetters({
       currentUser: 'users/currentUser'
-  }),
-    ...mapState({
-            friends: state => state.users.users
-            })}, 
-
-/*   created(){
-     this.$store.dispatch('friends/getFriends', this.currentUser.id)
-            .then(() => {
-              console.log('success');
-            }).catch(e => console.log('error'));
+  })
+  }, 
+  created(){
+    
             
-  }, */
+  },
 
   methods:{
     showEditModal(index) {

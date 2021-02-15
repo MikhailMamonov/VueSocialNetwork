@@ -4,7 +4,7 @@
     max-width="600"
   >
      <div
-              :class="[`text-h2`, active && `mb-1`]"
+              :class="[`text-h2`,  `mb-1`]"
               class="transition-swing"
             >
             Users List
@@ -60,6 +60,12 @@ export default {
         this.isModalDeleteVisible = false;
       }
   },
+  created(){
+    debugger;
+  },
+  mounted(){
+    debugger;
+  }
 /*   created(){
        
         this.$store.dispatch('users/getUsers')

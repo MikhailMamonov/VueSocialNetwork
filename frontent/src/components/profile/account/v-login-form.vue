@@ -8,14 +8,14 @@
                         <v-spacer></v-spacer>
                     </v-toolbar>
                     <v-card-text>
-                <v-form>
-                  <v-text-field prepend-icon="person" v-model="email" label="Email" type="text"></v-text-field>
-                  <v-text-field id="password" prepend-icon="lock" v-model="password" label="Password" type="password"></v-text-field>
+                <v-form v-model="valid">
+                  <v-text-field v-model="email" label="Email" :rules="emailRules" type="text"></v-text-field>
+                  <v-text-field v-model="password" label="Password" :rules="passwordRules" type="password"></v-text-field>
                 </v-form>
               </v-card-text>
                <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click='logIn'>Login</v-btn>
+                <v-btn :disabled="!valid" color="primary" @click='logIn'>Login</v-btn>
               </v-card-actions>
                  </v-card>
              </v-flex>
@@ -37,8 +37,18 @@ export default {
         return { 
             isBusy: false,
             errors: '',
-            email:null,
-            password:null
+            password:'',
+            valid: true,
+
+            passwordRules: [
+                v => !!v || 'Password is required',
+                v => v.length >= 6 || 'Passsword must be more than 6 characters',
+      ],
+            email: '',
+            emailRules: [
+                v => !!v || 'E-mail is required',
+                v => /.+@.+/.test(v) || 'E-mail must be valid',
+            ],
        };
     },  
     

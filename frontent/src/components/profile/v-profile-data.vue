@@ -1,4 +1,5 @@
 <template>
+    <div>
  <v-card
     max-width="600"
     class="mx-auto mt-12"
@@ -65,7 +66,7 @@
 
         <v-list-item-content>
           <v-list-item-title>(323) 555-6789</v-list-item-title>
-          <v-list-item-subtitle>Work</v-list-item-subtitle>
+          <v-list-item-subtitle>{{$route.params.userId}}</v-list-item-subtitle>
         </v-list-item-content>
 
         <v-list-item-icon>
@@ -113,65 +114,17 @@
       </v-list-item>
     </v-list>
 
-
-
-            
-      <!--   <v-posts /> -->
-
-
-        
+       
  </v-card>
+    </div>
 </template>
 
-<script >
-import { mapGetters } from 'vuex';
-import { mapState } from 'vuex';
-// import vPosts from '@/components/posts/v-posts.vue';
-
-
-export default {
-    name: 'v-profile',
-    data: function () {
-    return { 
-      isBusy: false,
-      isModalVisible: false,
-      user:{}
-       };  
-  },
-  methods:{
-      name() {
-        console.log("user", this.profile);
-      return this.profile.firstName + ' ' + this.profile.lastName;
-  },
-  showModal() {
-        this.isModalVisible = true;
-      },
-      closeModal() {
-        this.isModalVisible = false;
-      }
-  },
-  computed:{
-    ...mapState({
-            //profile: state => state.auth.user
-            }),
-      ...mapGetters({
-        profile: 'users/currentUser'
-      }),
-      getImageSrc () {
-        return 'data:image/jpeg;base64,' + this.profile.profilePicture;
-      }
-  },
-  // components: {
-  //   vPosts
-  // },
-
-   created() {
-     console.log("v-profile created");
-     this.isBusy = true;      
-  }
-}
+<script>
+    export default {
+        
+    }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 </style>

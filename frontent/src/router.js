@@ -5,7 +5,7 @@ import vDashboardRoot from './views/dashboard/v-root.vue';
 import DashboardHome from './views/dashboard/v-home.vue';
 import vLoginForm from '@/components/profile/account/v-login-form.vue';
 import vRegisterForm from '@/components/profile/account/v-registration-form.vue';
-import vProfile from './components/profile/v-profile.vue';
+import vProfile from './components/profile/v-profile-grid.vue';
 import vAbout from './components/v-about.vue';
 import vHome from './components/v-home.vue';
 import vPosts from './components/posts/v-posts';
@@ -36,6 +36,13 @@ const router = new Router({
       name: 'current_user',
       component: vProfile,
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/profile/:userId',
+      name: 'profile',
+      component: vProfile,
+      meta: { requiresAuth: true },
+
     },
     {
       path: '/friends',
@@ -85,7 +92,7 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  debugger;
+
   if (to.matched.some((record) => record.meta.requiresAuth)) {
 
     if (store.getters['auth/isAuthenticated']) {

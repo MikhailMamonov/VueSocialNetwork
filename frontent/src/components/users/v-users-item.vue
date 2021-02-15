@@ -17,10 +17,10 @@
 
          
           
-              <button class="btn btn-danger" v-if="isFriend" @click="deleteFromFriends()">Delete from friends</button>
+              <button class="btn btn-danger" v-if="isFriend" @click="deleteFriend()">Delete from friends</button>
               <button class=" btn btn-danger" v-else-if="isFriendRequested" @click="cancelRequest()">Cancel request</button>
               <button class=" btn btn-primary" v-else-if="user.id!==currentUser.id" @click="addToFriend()">Add to Friend</button>
-              <router-link v-else to="/current_user" class=" btn btn-info" tag="button">Edit profile</router-link>
+              <router-link v-else :to="{ name: 'profile', params: { userId: currentUser.id }}" class=" btn btn-info" tag="button">Edit profile</router-link>
         </v-list-item>
 </template>
 
@@ -64,9 +64,9 @@ export default {
           
     },
     
-    deleteFromFriends(){
+    deleteFriend(){
       console.log("current User",  this.currentUser);
-      this.$store.dispatch('friends/deleteFromFriends', {senderId:this.currentUser.id, receiverId:this.user.id})
+      this.$store.dispatch('friends/deleteFriend', this.user.id)
             .then(() => {
               console.log('success');
             }).catch(e => this.hasError = true);

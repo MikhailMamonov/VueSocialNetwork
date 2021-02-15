@@ -5,8 +5,10 @@ import auth from './modules/auth/index';
 import users from './modules/users/index';
 import posts from './modules/posts/index';
 import friends from './modules/friends/index';
+import createPersistedState from "vuex-persistedstate";
 
 Vue.use(Vuex);
+
 
 export default new Vuex.Store({
   modules: {
@@ -15,4 +17,5 @@ export default new Vuex.Store({
     posts: posts,
     friends: friends
 },
+plugins: [createPersistedState()]
 });

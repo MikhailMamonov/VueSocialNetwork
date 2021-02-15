@@ -21,8 +21,27 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
     name: 'v-home',
+    created(){
+      debugger;
+      this.$store.dispatch('users/getUsers')
+            .then(() => {
+              console.log('success');
+            }).catch(e => console.log('error'));
+    debugger;
+    this.$store.dispatch('friends/getFriends', this.currentUser.id)
+            .then(() => {
+              console.log('success');
+            })
+            .catch(e => console.log('error'));
+    },
+    
+    computed:{
+    ...mapGetters({
+      currentUser: 'users/currentUser'
+    })},
 }
 </script>
 

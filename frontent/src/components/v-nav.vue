@@ -6,7 +6,7 @@
           <router-link to="/" class="nav-link">Home</router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/current_user" class="nav-link">Profile</router-link>
+          <router-link :to="{ name: 'profile', params: { userId: currentUser.id }}" class="nav-link">Profile</router-link>
         </li>
         <li class="nav-item">
           <router-link to="/friends" class="nav-link">Friends</router-link>
@@ -63,6 +63,7 @@ export default {
   }
             },
    mounted() {
+     debugger;
      console.log("currentUser", this.currentUser);
      if(this.isAuthenticated){
             this.$store.dispatch('users/userRequest', {id: this.currentUser.id})

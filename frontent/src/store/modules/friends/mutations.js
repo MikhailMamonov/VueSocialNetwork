@@ -25,18 +25,21 @@ const ADD_FRIEND_ERROR = (state, errors) => {
     console.log(errors);
 };
 
-const DELETE_FRIEND_SUCCESS = (state,id) => {
-    console.log("httpdelete id",id);
-    var index = state.friends.findIndex(p => p.id == id);
+const DELETE_FRIEND = (state,friendId) => {
+    console.log("httpdelete friendId",friendId);
+    var index = state.friends.findIndex(p => p.id == friendId);
     console.log("index in array ",index);
     state.friends.splice(index, 1);
-    console.log("posts after delete",state.friends);
+    console.log("friends after delete",state.friends);
     debugger;
 }
 
 const SET_FRIEND_REQUESTS = (state, friendRequests)=>{
-    debugger;
     state.friendRequests = friendRequests;
+}
+
+const ADD_FRIEND = (state, friend)=>{
+    state.friends.push(friend);
 }
 
 
@@ -44,9 +47,10 @@ const SET_FRIEND_REQUESTS = (state, friendRequests)=>{
 export {
     ADD_FRIEND_REQUEST_SUCCESS,
     ADD_FRIEND_ERROR,
-    DELETE_FRIEND_SUCCESS,
+    DELETE_FRIEND,
     DELETE_FRIEND_REQUEST,
     SET_FRIEND_REQUESTS,
-    GET_FRIENDS
+    GET_FRIENDS,
+    ADD_FRIEND
 
 }

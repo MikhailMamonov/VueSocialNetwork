@@ -9,22 +9,22 @@
                
               </v-toolbar>
               <v-card-text>
-                <v-form>
-                  <v-text-field prepend-icon="person" v-model="user.email" label="Email" type="email"></v-text-field>
-                  <v-text-field prepend-icon="person" v-model="user.userName" label="UserName" type="userName"></v-text-field>
-                  <v-text-field id="password" prepend-icon="lock" v-model="user.password" label="Password" type="password"></v-text-field>
-                  <v-text-field id="password" prepend-icon="lock" v-model="user.confirmPassword" label="ConfirmPassword" type="password"></v-text-field>
-                  <v-text-field prepend-icon="person" v-model="user.firstName" label="First name" type="text"></v-text-field>
-                  <v-text-field prepend-icon="person" v-model="user.lastName" label="Last name" type="text"></v-text-field>
+                <v-form v-model="valid">
+                  <v-text-field  v-model="user.email" :rules="emailRules" label="Email" type="email"></v-text-field>
+                  <v-text-field  v-model="user.userName" label="UserName" :rules="nameRules" type="text"></v-text-field>
+                  <v-text-field  v-model="user.password" label="Password" :rules="passwordRules" type="password"></v-text-field>
+                  <v-text-field  v-model="user.confirmPassword" label="ConfirmPassword" :rules="passwordRules" type="password"></v-text-field>
+                  <v-text-field  v-model="user.firstName" label="First name" :rules="nameRules" type="text"></v-text-field>
+                  <v-text-field  v-model="user.lastName" label="Last name" :rules="nameRules" type="text"></v-text-field>
                   
-                  <v-text-field prepend-icon="person" v-model="user.age" label="Age" type="number"></v-text-field>
-                  <v-text-field prepend-icon="person" v-model="user.location" label="Location" type="text"></v-text-field>
+                  <v-text-field v-model="user.age" label="Age" :rules="ageRules" type="number"></v-text-field>
+                  <v-text-field v-model="user.location" label="Location" type="text"></v-text-field>
                   
                 </v-form>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" type='submit' @click='registerUser'>Signup</v-btn>
+                <v-btn :disabled="!valid" color="primary" type='submit' @click='registerUser'>Signup</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -39,19 +39,32 @@ export default {
   name: 'v-registration-form',
   data: function(){  
     return { 
-      isBusy: false,
-      errors: '',
+      passwordRules: [
+                v => !!v || 'Password is required',
+                v => v.length >= 6 || 'Passsword must be more than 6 characters',
+      ],
+      emailRules: [
+          v => !!v || 'E-mail is required',
+          v => /.+@.+/.test(v) || 'E-mail must be valid',
+       ],
+       nameRules: [
+        v => !!v || 'Name is required',
+        v => (v && v.length <= 10) || 'Name must be less than 10 characters',
+      ],
+      ageRules: [
+        v => !!v || 'Age is required',
+        v => (v && v >= 18) || 'Age must be more than 18 years',
+      ],
       user:{email: '',password: '', confirmPassword:'', age: 0, userName:'noname',photo:'https://www.cjoint.com/doc/16_06/FFdlyIDXEEm_username.jpg',
-             firstName:'noname',lastName: 'noname',location: ''}
+             firstName:'noname',lastName: 'noname',location: ''},
        };
        },
   methods:{
     registerUser(){
-      this.isBusy = true;
       accountService.register(this.user)
        .then((result) => {
          this.$router.push('/');
-       }).catch((errors) =>  this.errors = errors).finally(() => this.isBusy = false);            
+       }).catch((errors) =>  this.errors = errors);            
      }
 }
 }

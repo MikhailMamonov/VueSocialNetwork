@@ -9,7 +9,7 @@
     <v-app-bar-nav-icon></v-app-bar-nav-icon>
     <v-tabs>
     <v-tab to="/">Home</v-tab>
-    <v-tab to="/current_user"> Profile</v-tab>
+    <v-tab :to="{ name: 'profile', params: { userId: currentUser.id } }"> Profile</v-tab>
     <v-tab to="/friends">Friends</v-tab>
     <v-tab to="/users">Users</v-tab>
     <v-tab to="/posts">Posts</v-tab>
@@ -82,11 +82,7 @@ export default {
     }, (err) => {
       return Promise.reject(err);
     });
-           
-        this.$store.dispatch('users/getUsers')
-            .then(() => {
-              console.log('success');
-            }).catch(e => console.log('error'));
+    
         
   }
 };
